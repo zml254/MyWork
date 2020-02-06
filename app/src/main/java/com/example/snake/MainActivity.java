@@ -2,6 +2,7 @@ package com.example.snake;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,7 +25,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         Button up = (Button) findViewById(R.id.up_btn);
         Button down = (Button) findViewById(R.id.down_btn);
@@ -45,8 +45,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 1) {
-                Toast.makeText(MainActivity.this, "游戏结束", Toast.LENGTH_SHORT).show();
                 stopTimer();
+                CommomDialog commomDialog = new CommomDialog(MainActivity.this,
+                        R.style.dialog, "是否继续游戏？", new CommomDialog.OnCloseListener() {
+                    @Override
+                    public void onClick(Dialog dialog, boolean confirm) {
+                        dialog.dismiss();
+                        if (confirm) {
+                            reStart();
+                        }
+                    }
+                });
+                commomDialog.setTitle("游戏结束")
+                            .setNegativeButton("否")
+                            .setPositiveButton("是")
+                            .show();
             }
         }
     };
@@ -72,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void stopTimer() {
         IS_PAUSE = true;
         mTimer.cancel();
-        Log.d("main","11111111111111");
     }
 
     @Override
