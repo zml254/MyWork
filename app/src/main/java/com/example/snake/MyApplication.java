@@ -17,26 +17,4 @@ public class MyApplication extends Application {
         return context;
     }
 
-    public void m() {
-        int[] a = new int[16 * 32];
-        int b = 0;
-        for (int x = 0, y = 0; x <= 15; ) {
-            for (; y <= 31 && y >= 0; ) {
-                a[b] = x * 100 + y;
-                if (x % 2 == 0) {
-                    y++;
-                } else {
-                    y--;
-                }
-                b++;
-            }
-            if (x % 2 == 0) {
-                y--;
-            } else {
-                y++;
-            }
-            x++;
-        }
-    }
-
 }

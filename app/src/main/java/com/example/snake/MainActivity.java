@@ -3,13 +3,12 @@ package com.example.snake;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,6 +20,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Timer mTimer;
 
     public static boolean IS_PAUSE;
+
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         reStart.setOnClickListener(this);
         snake = findViewById(R.id.snake_view);
         startTimer();
+        intent = new Intent(MainActivity.this, ForegroundService.class);
+        startService(intent);
     }
 
     Handler handler = new Handler(){
@@ -112,5 +115,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(intent);
     }
 }
