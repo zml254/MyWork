@@ -9,6 +9,7 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -22,15 +23,15 @@ public class SnakeSpace extends View {
     public static final int DIRECTION_DOWN = 2;
     public static final int DIRECTION_RIGHT = 3;
     public static final int DIRECTION_LEFT = 4;
-    private int direction;
+    int direction;
 
-    private int snakeFoot;
+    int snakeFoot;
 
-    public int score = 0;
+    int score ;
 
     public Message message;
 
-    private LinkedList<Integer> snakeList;
+    LinkedList<Integer> snakeList;
 
     public SnakeSpace(Context context) {
         super(context);
@@ -52,12 +53,15 @@ public class SnakeSpace extends View {
     }
 
     private void initView() {
-        direction = DIRECTION_UP;
-        snakeList = new LinkedList<>();
-        snakeList.add(8 * 100 + 16);
-        snakeList.add(8 * 100 + 17);
-        snakeList.add(8 * 100 + 18);
-        showFood();
+        if (snakeList == null) {
+            snakeList = new LinkedList<Integer>();
+            score = 0;
+            direction = DIRECTION_UP;
+            snakeList.add(8 * 100 + 16);
+            snakeList.add(8 * 100 + 17);
+            snakeList.add(8 * 100 + 18);
+            showFood();
+        }
     }
 
     public void move() {
@@ -105,6 +109,7 @@ public class SnakeSpace extends View {
             if (firstIndex == snakeFoot) {
                 score++;
                 showFood();
+                message.what = 2;
             } else {
                 snakeList.removeLast();
             }
@@ -112,6 +117,13 @@ public class SnakeSpace extends View {
         }else {
             message.what = 1;
         }
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int newHeight = MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec) * 2,
+                MeasureSpec.getMode(heightMeasureSpec));
+        super.onMeasure(widthMeasureSpec, newHeight);
     }
 
     public void move(int dir) {
@@ -130,6 +142,10 @@ public class SnakeSpace extends View {
             y = r1.nextInt(32);
         }
         snakeFoot = x * 100 + y;
+    }
+
+    void pointFood(int snakeFoot) {
+        this.snakeFoot = snakeFoot;
     }
 
     @Override
