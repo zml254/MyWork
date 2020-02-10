@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,11 +24,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private SnakeSpace snake;
 
-    public String TAG = "Snake";
-
     private Timer mTimer;
 
     private TextView scoreView;
+    private TextView historyView;
 
     private int score;
     private int period = 500;
@@ -39,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Intent intent;
     private Intent intent1;
+
+    private SharedPreferences data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,14 +53,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button right = (Button) findViewById(R.id.right_btn);
         Button reStart = (Button) findViewById(R.id.pause_btn);
         scoreView = (TextView) findViewById(R.id.score_view);
+        historyView = (TextView) findViewById(R.id.history_view);
+        data = getSharedPreferences("SnakeFiles", MODE_PRIVATE);
+        score = 0;
         up.setOnClickListener(this);
         down.setOnClickListener(this);
         left.setOnClickListener(this);
         right.setOnClickListener(this);
         reStart.setOnClickListener(this);
         snake = findViewById(R.id.snake_view);
-        SharedPreferences gameData = getSharedPreferences("SnakeFiles", MODE_PRIVATE);
-        if (gameData.getBoolean("IsSaved", false)) {
+        showHistory();
+        if (data.getBoolean("IsSaved", false)) {
             CommomDialog commomDialog = new CommomDialog(MainActivity.this,
                     R.style.dialog, "是否读取游戏？", new CommomDialog.OnCloseListener() {
                 @Override
@@ -96,15 +99,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onClick(Dialog dialog, boolean confirm) {
                         dialog.dismiss();
-                        SharedPreferences data = getSharedPreferences("SnakeFiles",
-                                MODE_PRIVATE);
                         SharedPreferences.Editor editor = data.edit();
                         editor.putBoolean("IsSaved", false);
+                        if (score > data.getInt("History", 0)) {
+                            editor.putInt("History", score);
+                            score = 0;
+                        }
                         editor.apply();
                         if (confirm) {
-                            Log.d(TAG, "onClick: -------------------");
                             snake.snakeList = null;
                             reStart();
+                            showHistory();
                         }
                     }
                 });
@@ -112,17 +117,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             .setNegativeButton("否")
                             .setPositiveButton("是")
                             .show();
+                showHistory();
             } else if (msg.what == 2) {
                 score++;
-                if (score > 10) {
+                if (score >= 3 && period > 400) {
                     period = 400;
+                    Toast.makeText(MainActivity.this, "速度提升", Toast.LENGTH_SHORT)
+                            .show();
+                    stopTimer();
+                    startTimer();
+                } else if (score >= 7 && period > 300) {
+                    period = 300;
+                    Toast.makeText(MainActivity.this, "速度提升", Toast.LENGTH_SHORT)
+                            .show();
+                    stopTimer();
+                    startTimer();
+                } else if (score >= 15 && period > 200) {
+                    period = 200;
+                    Toast.makeText(MainActivity.this, "速度提升", Toast.LENGTH_SHORT)
+                            .show();
+                    stopTimer();
+                    startTimer();
+                } else if (score >= 25 && period > 100) {
+                    period = 100;
+                    Toast.makeText(MainActivity.this, "速度提升", Toast.LENGTH_SHORT)
+                            .show();
+                    stopTimer();
+                    startTimer();
                 }
             }
         }
     };
 
+    private void showHistory() {
+        historyView.setText(String .valueOf(data.getInt("History", 0)));
+    }
+
     private void savedData() {
-        SharedPreferences data = getSharedPreferences("SnakeFiles", MODE_PRIVATE);
         SharedPreferences.Editor editor = data.edit();
         String snakeBody = "Snake";
         for (int a = 0; a < snake.snakeList.size(); a++) {
@@ -138,7 +169,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void loadData() {
         snake.snakeList = new LinkedList<Integer>();
-        SharedPreferences data = getSharedPreferences("SnakeFiles", MODE_PRIVATE);
         int a = data.getInt("SnakeSize", 0);
         for (int b = 0; b < a; b++) {
             snake.snakeList.add(data.getInt("Snake" + b, 0));
@@ -168,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 handler.sendMessage(snake.message);
                 scoreView.setText(String.valueOf(score));
             }
-        },1000,100);
+        },1000,period);
     }
 
     public void stopTimer() {
