@@ -3,14 +3,9 @@ package com.example.snake;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.icu.util.Measure;
-import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 

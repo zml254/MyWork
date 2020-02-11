@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -20,7 +21,7 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private SnakeSpace snake;
 
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         showHistory();
         if (data.getBoolean("IsSaved", false)) {
             CommomDialog commomDialog = new CommomDialog(MainActivity.this,
-                    R.style.dialog, "是否读取游戏？", new CommomDialog.OnCloseListener() {
+                    R.style.dialog, "是否继续游戏？", new CommomDialog.OnCloseListener() {
                 @Override
                 public void onClick(Dialog dialog, boolean confirm) {
                     dialog.dismiss();
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    Handler handler =  new Handler(){
+    Handler handler = new Handler() {
 
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -103,10 +104,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         editor.putBoolean("IsSaved", false);
                         if (score > data.getInt("History", 0)) {
                             editor.putInt("History", score);
-                            period = 500;
                             score = 0;
                         }
                         editor.apply();
+                        period = 500;
                         if (confirm) {
                             snake.snakeList = null;
                             reStart();
@@ -115,9 +116,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 });
                 commomDialog.setTitle("游戏结束")
-                            .setNegativeButton("否")
-                            .setPositiveButton("是")
-                            .show();
+                        .setNegativeButton("否")
+                        .setPositiveButton("是")
+                        .show();
                 showHistory();
             } else if (msg.what == 2) {
                 score++;
@@ -151,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     private void showHistory() {
-        historyView.setText(String .valueOf(data.getInt("History", 0)));
+        historyView.setText(String.valueOf(data.getInt("History", 0)));
     }
 
     private void savedData() {
@@ -163,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.putInt("SnakeSize", snake.snakeList.size());
         editor.putInt("SnakeFood", snake.snakeFoot);
         editor.putInt("SnakeDirection", snake.direction);
+        editor.putInt("SnakePeriod", period);
         editor.putInt("Score", snake.score);
         editor.putBoolean("IsSaved", true);
         editor.apply();
@@ -177,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         score = data.getInt("Score", 0);
         snake.direction = data.getInt("SnakeDirection", 0);
         snake.pointFood(data.getInt("SnakeFood", 0));
+        period = data.getInt("SnakePeriod", 0);
     }
 
     private void reStart() {
@@ -199,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 handler.sendMessage(snake.message);
                 scoreView.setText(String.valueOf(score));
             }
-        },1000,period);
+        }, 1000, period);
     }
 
     public void stopTimer() {
@@ -227,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 snake.move(SnakeSpace.DIRECTION_RIGHT);
                 break;
             case R.id.pause_btn:
-                if (isPause&&!isOver) {
+                if (isPause && !isOver) {
                     startTimer();
                 } else {
                     stopTimer();
@@ -263,12 +266,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
                 if (reason != null) {
                     if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
-                        Toast.makeText(MainActivity.this,"游戏已暂停",
+                        Toast.makeText(MainActivity.this, "游戏已暂停",
                                 Toast.LENGTH_SHORT).show();
+                        if (!isOver) {
+                            savedData();
+                        }
                         stopTimer();
                     } else if (reason.equals(SYSTEM_DIALOG_REASON_RECENT_APPS)) {
-                        Toast.makeText(MainActivity.this,"游戏已暂停",
+                        Toast.makeText(MainActivity.this, "游戏已暂停",
                                 Toast.LENGTH_SHORT).show();
+                        if (!isOver) {
+                            savedData();
+                        }
                         stopTimer();
                     }
                 }

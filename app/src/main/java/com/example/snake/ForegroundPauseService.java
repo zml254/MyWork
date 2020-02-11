@@ -32,7 +32,7 @@ public class ForegroundPauseService extends Service {
         NotificationCompat.Builder nb = new NotificationCompat.Builder(this, "1");
         nb.setContentIntent(pi)
                 .setContentTitle("Snake")
-                .setContentText("游戏暂停")
+                .setContentText("游戏暂停，点击继续游戏")
                 .setWhen(System.currentTimeMillis())
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
