@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         editor.putBoolean("IsSaved", false);
                         if (score > data.getInt("History", 0)) {
                             editor.putInt("History", score);
+                            period = 500;
                             score = 0;
                         }
                         editor.apply();
@@ -229,7 +230,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (isPause&&!isOver) {
                     startTimer();
                 } else {
-                    savedData();
                     stopTimer();
                 }
                 break;
@@ -240,6 +240,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
+        if (!isOver) {
+            savedData();
+        }
         super.onDestroy();
         stopService(intent);
         stopService(intent1);
