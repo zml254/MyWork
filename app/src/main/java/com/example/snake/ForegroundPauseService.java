@@ -26,7 +26,7 @@ public class ForegroundPauseService extends Service {
     }
 
     public Notification getNotification() {
-        Intent intent1 = new Intent(this, MainActivity.class);
+        Intent intent1 = new Intent(this, BaseActivity.class);
         PendingIntent pi = PendingIntent.getActivity(this,
                 0, intent1, 0);
         NotificationCompat.Builder nb = new NotificationCompat.Builder(this, "1");

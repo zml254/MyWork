@@ -11,7 +11,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,7 +20,7 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class BaseActivity extends AppCompatActivity implements View.OnClickListener {
 
     private SnakeSpace snake;
 
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_base);
         InnerRecevier innerRecevier = new InnerRecevier();
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         registerReceiver(innerRecevier, intentFilter);
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         snake = findViewById(R.id.snake_view);
         showHistory();
         if (data.getBoolean("IsSaved", false)) {
-            CommomDialog commomDialog = new CommomDialog(MainActivity.this,
+            CommomDialog commomDialog = new CommomDialog(BaseActivity.this,
                     R.style.dialog, "是否继续游戏？", new CommomDialog.OnCloseListener() {
                 @Override
                 public void onClick(Dialog dialog, boolean confirm) {
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (msg.what == 1) {
                 isOver = true;
                 stopTimer();
-                CommomDialog commomDialog = new CommomDialog(MainActivity.this,
+                CommomDialog commomDialog = new CommomDialog(BaseActivity.this,
                         R.style.dialog, "是否继续游戏？", new CommomDialog.OnCloseListener() {
                     @Override
                     public void onClick(Dialog dialog, boolean confirm) {
@@ -124,25 +123,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 score++;
                 if (score >= 3 && period > 400) {
                     period = 400;
-                    Toast.makeText(MainActivity.this, "速度提升", Toast.LENGTH_SHORT)
+                    Toast.makeText(BaseActivity.this, "速度提升", Toast.LENGTH_SHORT)
                             .show();
                     stopTimer();
                     startTimer();
                 } else if (score >= 7 && period > 300) {
                     period = 300;
-                    Toast.makeText(MainActivity.this, "速度提升", Toast.LENGTH_SHORT)
+                    Toast.makeText(BaseActivity.this, "速度提升", Toast.LENGTH_SHORT)
                             .show();
                     stopTimer();
                     startTimer();
                 } else if (score >= 15 && period > 200) {
                     period = 200;
-                    Toast.makeText(MainActivity.this, "速度提升", Toast.LENGTH_SHORT)
+                    Toast.makeText(BaseActivity.this, "速度提升", Toast.LENGTH_SHORT)
                             .show();
                     stopTimer();
                     startTimer();
                 } else if (score >= 25 && period > 100) {
                     period = 100;
-                    Toast.makeText(MainActivity.this, "速度提升", Toast.LENGTH_SHORT)
+                    Toast.makeText(BaseActivity.this, "速度提升", Toast.LENGTH_SHORT)
                             .show();
                     stopTimer();
                     startTimer();
@@ -189,8 +188,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void startTimer() {
-        intent = new Intent(MainActivity.this, ForegroundService.class);
-        intent1 = new Intent(MainActivity.this, ForegroundPauseService.class);
+        intent = new Intent(BaseActivity.this, ForegroundService.class);
+        intent1 = new Intent(BaseActivity.this, ForegroundPauseService.class);
         startService(intent);
         stopService(intent1);
         isPause = false;
@@ -206,8 +205,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void stopTimer() {
-        intent = new Intent(MainActivity.this, ForegroundService.class);
-        intent1 = new Intent(MainActivity.this, ForegroundPauseService.class);
+        intent = new Intent(BaseActivity.this, ForegroundService.class);
+        intent1 = new Intent(BaseActivity.this, ForegroundPauseService.class);
         startService(intent1);
         stopService(intent);
         isPause = true;
@@ -266,14 +265,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String reason = intent.getStringExtra(SYSTEM_DIALOG_REASON_KEY);
                 if (reason != null) {
                     if (reason.equals(SYSTEM_DIALOG_REASON_HOME_KEY)) {
-                        Toast.makeText(MainActivity.this, "游戏已暂停",
+                        Toast.makeText(BaseActivity.this, "游戏已暂停",
                                 Toast.LENGTH_SHORT).show();
                         if (!isOver) {
                             savedData();
                         }
                         stopTimer();
                     } else if (reason.equals(SYSTEM_DIALOG_REASON_RECENT_APPS)) {
-                        Toast.makeText(MainActivity.this, "游戏已暂停",
+                        Toast.makeText(BaseActivity.this, "游戏已暂停",
                                 Toast.LENGTH_SHORT).show();
                         if (!isOver) {
                             savedData();

@@ -2,7 +2,9 @@ package com.example.snake;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
@@ -22,7 +24,7 @@ public class SnakeSpace extends View {
 
     int snakeFoot;
 
-    int score ;
+    int score;
 
     public Message message;
 
@@ -150,18 +152,42 @@ public class SnakeSpace extends View {
         int dx = width / 16;
         Paint line = new Paint();
         line.setStrokeWidth(4);
-        canvas.drawColor(0xffFCBD00);
+        canvas.drawColor(Color.BLACK);
         canvas.drawLine(0,0,width,0,line);
         canvas.drawLine(width, 0, width, height, line);
         canvas.drawLine(0, height, width, height, line);
         canvas.drawLine(0, 0, 0, height, line);
         Paint paint = new Paint();
-        paint.setColor(0x50000000);
+        paint.setColor(Color.YELLOW);
+        Path path = new Path();
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 32; j++) {
                 if (snakeList.contains(i * 100 + j) || snakeFoot == (i * 100 + j)) {
-                    canvas.drawRect((dx * i) + 1, (dx * j) + 1,
-                            (dx * i) + dx - 1, (dx * j) + dx - 1, line);
+//                    Paint paint1 = new Paint();
+//                    paint1.setStyle(Paint.Style.FILL);
+//                    paint1.setColor(0x50000000);
+//                    canvas.drawRect((dx * i) + 1, (dx * j) + 1,
+//                            (dx * i) + dx - 1, (dx * j) + dx - 1, line);
+                    path.moveTo(dx * i + 1, dx * j + 1);
+                    path.lineTo(dx * i + (float)dx / 3 + 1, dx * j + 1);
+                    path.lineTo(dx * i + 1, dx * j + (float)dx / 3 + 1);
+                    path.close();
+                    canvas.drawPath(path,paint);
+                    path.moveTo(dx * i + dx - 1, dx * j + 1);
+                    path.lineTo(dx * i + 2 * dx / 3 - 1, dx * j + 1);
+                    path.lineTo(dx * i + dx - 1, dx * j + dx / 3 + 1);
+                    path.close();
+                    canvas.drawPath(path,paint);
+                    path.moveTo(dx * i + 1, dx * j + dx - 1);
+                    path.lineTo(dx * i + 1, dx * j + 2 * dx / 3 - 1);
+                    path.lineTo(dx * i + dx / 3 + 1, dx * j + dx - 1);
+                    path.close();
+                    canvas.drawPath(path, paint);
+                    path.moveTo(dx * i + dx - 1, dx * j + dx - 1);
+                    path.lineTo(dx * i + 2 * dx / 3 - 1, dx * j + dx - 1);
+                    path.lineTo(dx * i + dx - 1, dx * j + 2 * dx / 3 - 1);
+                    path.close();
+                    canvas.drawPath(path, paint);
                 } else {
                     canvas.drawRect((dx * i) + 1, (dx * j) + 1,
                             (dx * i) + dx - 1, (dx * j) + dx - 1, paint);

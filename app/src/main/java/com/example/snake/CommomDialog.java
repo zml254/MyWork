@@ -51,7 +51,7 @@ public class CommomDialog extends Dialog implements View.OnClickListener {
         this.listener = listener;
     }
 
-        public CommomDialog setPositiveButton(String name) {
+    public CommomDialog setPositiveButton(String name) {
         this.positiveName = name;
         return this;
     }
